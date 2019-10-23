@@ -49,15 +49,15 @@ namespace FakerLib
                         availiableGenerators.Add(t, plugin);
                 }
             }
-            /*this.AddGenerator(new IntGenerator());
-            this.AddGenerator(new LatinLetterGenerator());
-            this.AddGenerator(new StringGenerator());*/
-            //shared.AddGenerator(new IntGenerator());
         }
         private static Faker faker = new Faker();
         public static object Create(Type objectType)
         {
             return faker.Create(objectType);
+        }
+        public static void AddConfig(FakerConfig config)
+        {
+
         }
     }
 
@@ -116,6 +116,7 @@ namespace FakerLib
                         for (int i = 0; i < maxParamsNum; i++)
                         {
                             Type parameterType = parameters[i].ParameterType;
+                            //var generator = Generators.GetSpecialGenerator(objectType, parameterType)
                             object paramValue = this.Create(parameterType);
                             paramsValues.Add(paramValue);
                         }

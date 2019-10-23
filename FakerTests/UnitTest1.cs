@@ -163,9 +163,16 @@ namespace FakerTests
         [TestMethod] 
         public void FloatGeneratorTest()
         {
-            float instance = (float)FakerLib.Generators.Create(typeof(float));
+            float floatInstance = (float)FakerLib.Generators.Create(typeof(float));
             float eps = float.Epsilon;
-            Assert.IsTrue(instance > default(float) + eps);
+            Assert.IsTrue(floatInstance > default(float) + eps);
+            bool boolInstance = (bool)FakerLib.Generators.Create(typeof(bool));
+            Assert.AreNotEqual(default(bool), boolInstance);
         }
+        /*public void ConfigTest()
+        {
+            //var config = new FakerConfig();
+            //config.Add<ConfigTestClass, int, EvenGenerator>(Instance => Instance.number);
+        }*/
     }
 }

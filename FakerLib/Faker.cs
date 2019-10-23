@@ -8,62 +8,9 @@ using System.Reflection;
 
 namespace FakerLib
 {
-
-    public class Generators
-    {
-        static Dictionary<Type, Common.IGenerator> availiableGenerators = new Dictionary<Type, Common.IGenerator>();
-        //static Dictionary<Type>
-        public static ListGenerator listGenerator = new ListGenerator();
-        public static Common.IGenerator GetGeneratorByType(Type type)
-        {
-            foreach (KeyValuePair<Type, Common.IGenerator> generator in availiableGenerators)
-            {
-                if (generator.Value.GeneratedType() == type) {
-                    return generator.Value;
-                }
-            }
-            return null;
-        }
-        //public static Generators shared = new Generators();
-        public void AddGenerator(Common.IGenerator newGenerator)
-        {
-            availiableGenerators.Add(newGenerator.GetType(), newGenerator);
-
-        }
-        static Generators()
-        {
-            availiableGenerators.Add(typeof(int), new IntGenerator());
-            availiableGenerators.Add(typeof(char), new LatinLetterGenerator());
-            availiableGenerators.Add(typeof(string), new StringGenerator());
-            String dllPath = "C:\\Users\\ilyayelagov\\source\\repos\\Faker\\FloatGenerator\\bin\\Debug\\FloatGenerator.dll";
-            if (File.Exists(dllPath))
-            {
-                Assembly asm = Assembly.LoadFrom(dllPath);
-                var types = asm.GetTypes().Where(t => t.GetInterfaces().Where(i => i.Equals(typeof(Common.IGenerator))).Any());
-
-                foreach (var type in types)
-                {
-                    var plugin = asm.CreateInstance(type.FullName) as Common.IGenerator;
-                    Type t = plugin.GeneratedType();
-                    if (!availiableGenerators.ContainsKey(t))
-                        availiableGenerators.Add(t, plugin);
-                }
-            }
-        }
-        private static Faker faker = new Faker();
-        public static object Create(Type objectType)
-        {
-            return faker.Create(objectType);
-        }
-        public static void AddConfig(FakerConfig config)
-        {
-
-        }
-    }
-
     internal class Faker
     {
-        //private Generators generators = new Generators();
+        private List<FakerConfig> configs = new List<FakerConfig>();
         private Stack<Type> generationStack = new Stack<Type>();
         private bool isBeingGenerated(Type type)
         {
@@ -75,6 +22,10 @@ namespace FakerLib
                 }
             }
             return false;
+        }
+        public void AddConfig(FakerConfig config)
+        {
+            this.configs.Add(config);
         }
         public object Create(Type type)
         {
@@ -94,7 +45,6 @@ namespace FakerLib
                 if (!objectType.IsPrimitive/*objectType.IsClass*/ && !objectType.IsAbstract && !objectType.IsGenericType)
                 {
                     this.generationStack.Push(objectType);
-                    //generated = ClassGenerator.generate(T) {
                     var constructorsList = objectType.GetConstructors();
                     if (constructorsList.Length > 0)
                     {
@@ -116,7 +66,12 @@ namespace FakerLib
                         for (int i = 0; i < maxParamsNum; i++)
                         {
                             Type parameterType = parameters[i].ParameterType;
-                            //var generator = Generators.GetSpecialGenerator(objectType, parameterType)
+                            for (int j = 0; j < this.configs.Count; j++)
+                            {
+                                var config = this.configs[j];
+                                Type configType = config.GetType();
+                                var genericParameters = configType.GetGenericArguments();
+                            }
                             object paramValue = this.Create(parameterType);
                             paramsValues.Add(paramValue);
                         }
@@ -130,10 +85,17 @@ namespace FakerLib
                     var otherFields = objectType.GetFields();
                     foreach (var field in otherFields)
                     {
+                        for (int j = 0; j < this.configs.Count; j++)
+                        {
+                            var config = this.configs[j];
+                            Type configType = config.GetType();
+                            var genericParameters = configType.GetGenericArguments();
+                            
+                        }
                         var fieldValue = Create(field.FieldType);
                         field.SetValue(generated, fieldValue);
                     }
-                    foreach (var property in type.GetProperties())
+                    foreach (var property in properties)
                     {
                         var propertyValue = Create(property.PropertyType);
                         if (property.CanWrite)
@@ -142,7 +104,6 @@ namespace FakerLib
                         }
                     }
                     this.generationStack.Pop();
-                    //}
                 }
                 else if (objectType.IsGenericType)
                 {

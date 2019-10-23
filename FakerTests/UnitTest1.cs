@@ -111,7 +111,7 @@ namespace FakerTests
         [TestMethod]
         public void ClassOfPrimitivesTest()
         {
-            ClassOfPrimitives instance = (ClassOfPrimitives)FakerLib.Generators.Create(typeof(ClassOfPrimitives));
+            ClassOfPrimitives instance = FakerLib.Generators.Create<ClassOfPrimitives>();
             Assert.AreNotEqual(default(int), instance.integer);
             Assert.AreNotEqual(default(char), instance.someChar);
             Assert.AreNotEqual(default(string), instance.someString);
@@ -119,7 +119,7 @@ namespace FakerTests
         [TestMethod]
         public void ClassOfPrimitivesWithConstructorTest()
         {
-            ClassOfPrimitivesWithConstructors instance = (ClassOfPrimitivesWithConstructors)FakerLib.Generators.Create(typeof(ClassOfPrimitivesWithConstructors));
+            ClassOfPrimitivesWithConstructors instance = FakerLib.Generators.Create<ClassOfPrimitivesWithConstructors>();
             Assert.AreNotEqual(default(int), instance.propertyInt);
             Assert.AreNotEqual(default(int), instance.getConstructedInteger());
             Assert.AreNotEqual(default(int), instance.getSecondConstructedInteger());
@@ -127,7 +127,7 @@ namespace FakerTests
         [TestMethod] 
         public void InterreqursionTest()
         {
-            UpperInterrecursiveClass instance = (UpperInterrecursiveClass)FakerLib.Generators.Create(typeof(UpperInterrecursiveClass));
+            UpperInterrecursiveClass instance = FakerLib.Generators.Create<UpperInterrecursiveClass>();
             Assert.IsNotNull(instance.innerInstance);
             Assert.IsNotNull(instance.innerInstance.innerInstance);
             Assert.IsNull(instance.innerInstance.innerInstance.innerInstance);
@@ -137,42 +137,50 @@ namespace FakerTests
         public void InheritanceTest()
         {
 
-            ChildClass instance = (ChildClass)FakerLib.Generators.Create(typeof(ChildClass));
+            ChildClass instance = FakerLib.Generators.Create<ChildClass>();
             Assert.AreNotEqual(default(int), instance.getChildConstructedValue);
             Assert.AreNotEqual(default(int), instance.getConstructedValue);
         }
         [TestMethod] 
         public void AbscentTypeTest ()
         {
-            AbscentType instance = (AbscentType)FakerLib.Generators.Create(typeof(AbscentType));
+            AbscentType instance = FakerLib.Generators.Create<AbscentType>();
             Assert.AreEqual(default(double), instance.value);
         }
         [TestMethod]
         public void StructTest()
         {
-            StructType instance = (StructType)FakerLib.Generators.Create(typeof(StructType));
+            StructType instance = FakerLib.Generators.Create<StructType>();
             Assert.AreNotEqual(default(int), instance.integer);
         }
         [TestMethod] 
         public void ListOfStructTest()
         {
-            ListClass instance = (ListClass)FakerLib.Generators.Create(typeof(ListClass));
+            ListClass instance = FakerLib.Generators.Create<ListClass>();
             Assert.IsTrue(instance.list.Count >= 4 && instance.list.Count <= 11);
             Assert.AreNotEqual(default(int), instance.list[0]);
         }
         [TestMethod] 
         public void FloatGeneratorTest()
         {
-            float floatInstance = (float)FakerLib.Generators.Create(typeof(float));
+            float floatInstance = FakerLib.Generators.Create<float>();
             float eps = float.Epsilon;
             Assert.IsTrue(floatInstance > default(float) + eps);
-            bool boolInstance = (bool)FakerLib.Generators.Create(typeof(bool));
+            bool boolInstance = FakerLib.Generators.Create<bool>();
             Assert.AreNotEqual(default(bool), boolInstance);
         }
-        /*public void ConfigTest()
+        class ConfigTestClass
         {
-            //var config = new FakerConfig();
-            //config.Add<ConfigTestClass, int, EvenGenerator>(Instance => Instance.number);
-        }*/
+            public int evenNumber;
+        }
+        [TestMethod]
+        public void FakerConfigTest()
+        {
+            var config = new FakerLib.FakerConfig();
+            config.Add<ConfigTestClass, int, FakerLib.EvenGenerator>(Instance => Instance.evenNumber);
+            FakerLib.Generators.AddConfig(config);
+            ConfigTestClass instance = FakerLib.Generators.Create<ConfigTestClass>();
+            Assert.IsTrue(instance.evenNumber % 2 == 0 && instance.evenNumber > 0);
+        }
     }
 }

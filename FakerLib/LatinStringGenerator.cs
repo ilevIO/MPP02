@@ -4,24 +4,30 @@ using System.Text;
 
 namespace FakerLib
 {
-    class StringGenerator : IGenerator
+    class StringGenerator : Common.IGenerator
     {
         private int minLength = 4;
         private int maxLength = 11;
-        static CharGenerator charGenerator = new LatinLetterGenerator();
+        Common.CharGenerator charGenerator = new LatinLetterGenerator();
         public object CreateInstance()
         {
-            char[] symbols = new char[ConvenienceRandom.Next(minLength, maxLength)];
+            char[] symbols = new char[Common.ConvenienceRandom.Next(minLength, maxLength)];
             for (int i = 0; i < symbols.Length; i++)
             {
                 symbols[i] = (char)charGenerator.CreateInstance();
             }
             return new string(symbols);
         }
-
         public Type GeneratedType()
         {
             return typeof(String);
+        }
+        public StringGenerator()
+        {
+        }
+        public StringGenerator(Common.CharGenerator charGenerator)
+        {
+            this.charGenerator = charGenerator;
         }
     }
 }

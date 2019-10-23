@@ -2,17 +2,21 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace FakerLib
 {
 
-    class Generators
+    public class Generators
     {
-        Dictionary<Type, IGenerator> availiableGenerators = new Dictionary<Type, IGenerator>();
-        public IGenerator GetGeneratorByType(Type type)
+        static Dictionary<Type, Common.IGenerator> availiableGenerators = new Dictionary<Type, Common.IGenerator>();
+        //static Dictionary<Type>
+        public static ListGenerator listGenerator = new ListGenerator();
+        public static Common.IGenerator GetGeneratorByType(Type type)
         {
-            foreach (KeyValuePair<Type, IGenerator> generator in availiableGenerators)
+            foreach (KeyValuePair<Type, Common.IGenerator> generator in availiableGenerators)
             {
                 if (generator.Value.GeneratedType() == type) {
                     return generator.Value;
@@ -21,29 +25,45 @@ namespace FakerLib
             return null;
         }
         //public static Generators shared = new Generators();
-        public void AddGenerator(IGenerator newGenerator)
+        public void AddGenerator(Common.IGenerator newGenerator)
         {
             availiableGenerators.Add(newGenerator.GetType(), newGenerator);
 
         }
-        /*private*/ public Generators()
+        static Generators()
         {
-            this.AddGenerator(new IntGenerator());
+            availiableGenerators.Add(typeof(int), new IntGenerator());
+            availiableGenerators.Add(typeof(char), new LatinLetterGenerator());
+            availiableGenerators.Add(typeof(string), new StringGenerator());
+            String dllPath = "C:\\Users\\ilyayelagov\\source\\repos\\Faker\\FloatGenerator\\bin\\Debug\\FloatGenerator.dll";
+            if (File.Exists(dllPath))
+            {
+                Assembly asm = Assembly.LoadFrom(dllPath);
+                var types = asm.GetTypes().Where(t => t.GetInterfaces().Where(i => i.Equals(typeof(Common.IGenerator))).Any());
+
+                foreach (var type in types)
+                {
+                    var plugin = asm.CreateInstance(type.FullName) as Common.IGenerator;
+                    Type t = plugin.GeneratedType();
+                    if (!availiableGenerators.ContainsKey(t))
+                        availiableGenerators.Add(t, plugin);
+                }
+            }
+            /*this.AddGenerator(new IntGenerator());
             this.AddGenerator(new LatinLetterGenerator());
-            this.AddGenerator(new StringGenerator());
+            this.AddGenerator(new StringGenerator());*/
             //shared.AddGenerator(new IntGenerator());
         }
+        private static Faker faker = new Faker();
+        public static object Create(Type objectType)
+        {
+            return faker.Create(objectType);
+        }
     }
-    public interface IGenerator
+
+    internal class Faker
     {
-        //bool GeneratesType(Type type);
-        Type GeneratedType();
-        object CreateInstance();
-        //T CreateInstance<T>();
-    }
-    public class Faker
-    {
-        private Generators generators = new Generators();
+        //private Generators generators = new Generators();
         private Stack<Type> generationStack = new Stack<Type>();
         private bool isBeingGenerated(Type type)
         {
@@ -64,42 +84,48 @@ namespace FakerLib
             {
                 return null;
             }
-            var generator = /*Generators.shared.*/generators.GetGeneratorByType(objectType);
+            var generator = /*Generators.shared.*/Generators.GetGeneratorByType(objectType);
             if (generator != null)
             {
                 generated = /*Generators.shared.*/generator.CreateInstance();
             }
             else
             {
-                if (objectType.IsClass && !objectType.IsAbstract)
+                if (!objectType.IsPrimitive/*objectType.IsClass*/ && !objectType.IsAbstract && !objectType.IsGenericType)
                 {
                     this.generationStack.Push(objectType);
                     //generated = ClassGenerator.generate(T) {
                     var constructorsList = objectType.GetConstructors();
-                    ConstructorInfo suitableConstructorInfo = constructorsList[0];
-                    int maxParamsNum = suitableConstructorInfo.GetParameters().Length;
-
-                    for (int i = 1; i < constructorsList.Length; i++)
+                    if (constructorsList.Length > 0)
                     {
-                        var paramsLen = constructorsList[i].GetParameters().Length;
-                        if (paramsLen > maxParamsNum)
+                        ConstructorInfo suitableConstructorInfo = constructorsList[0];
+                        int maxParamsNum = suitableConstructorInfo.GetParameters().Length;
+
+                        for (int i = 1; i < constructorsList.Length; i++)
                         {
-                            maxParamsNum = paramsLen;
-                            suitableConstructorInfo = constructorsList[i];
+                            var paramsLen = constructorsList[i].GetParameters().Length;
+                            if (paramsLen > maxParamsNum)
+                            {
+                                maxParamsNum = paramsLen;
+                                suitableConstructorInfo = constructorsList[i];
+                            }
                         }
+                        var parameters = suitableConstructorInfo.GetParameters();
+
+                        List<object> paramsValues = new List<object>();
+                        for (int i = 0; i < maxParamsNum; i++)
+                        {
+                            Type parameterType = parameters[i].ParameterType;
+                            object paramValue = this.Create(parameterType);
+                            paramsValues.Add(paramValue);
+                        }
+                        generated = suitableConstructorInfo.Invoke(paramsValues.ToArray());
+                    }
+                    else
+                    {
+                        generated = Activator.CreateInstance(objectType);
                     }
                     var properties = objectType.GetProperties();
-                    var parameters = suitableConstructorInfo.GetParameters();
-
-                    List<object> paramsValues = new List<object>();
-                    for (int i = 0; i < maxParamsNum; i++)
-                    {
-                        Type parameterType = parameters[i].ParameterType;
-                        object paramValue = this.Create(parameterType);
-                        paramsValues.Add(paramValue);
-                    }
-                    generated = suitableConstructorInfo.Invoke(paramsValues.ToArray());
-
                     var otherFields = objectType.GetFields();
                     foreach (var field in otherFields)
                     {
@@ -117,9 +143,29 @@ namespace FakerLib
                     this.generationStack.Pop();
                     //}
                 }
-                else if (objectType.IsValueType)
+                else if (objectType.IsGenericType)
+                {
+                    //handle collections;
+                    generated = Generators.listGenerator.Generate(objectType.GetGenericArguments()[0]);
+                }
+                else if (!objectType.IsPrimitive && objectType.IsValueType)
                 {
                     //handle structs;
+                    generated = Activator.CreateInstance(objectType);
+                    var otherFields = objectType.GetFields();
+                    foreach (var field in otherFields)
+                    {
+                        var fieldValue = Create(field.FieldType);
+                        field.SetValue(generated, fieldValue);
+                    }
+                }
+                else if (objectType.IsGenericType)
+                {
+                    ICollectionGenerator collectionGenerator = Generators.GetGeneratorByType(objectType) as ICollectionGenerator;
+                    if (collectionGenerator != null)
+                    {
+                        generated = collectionGenerator.Generate(objectType.GenericTypeArguments[0]);
+                    }
                 }
             }
             return generated;

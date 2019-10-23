@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
-namespace FakerLib
+namespace ExtendedSymbolGenerator
 {
-    
-    
-    class LatinLetterGenerator : Common.CharGenerator
+    public class ExtendedSymbolGenerator : Common.CharGenerator
     {
         public override object CreateInstance()
         {
-            return Convert.ToChar(Common.ConvenienceRandom.Next(65, 122));
+            return Convert.ToChar(Common.ConvenienceRandom.Next(0, 127));
         }
 
         public override Type GeneratedType()

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{12075A55-40AB-4AC8-BA76-CCA8F710EBAC}</ProjectGuid>
+    <ProjectGuid>{95DEE030-FDC1-4428-B11B-28C81406696F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExtendedSymbolGenerator</RootNamespace>
-    <AssemblyName>ExtendedSymbolGenerator</AssemblyName>
+    <RootNamespace>FloatGenerator</RootNamespace>
+    <AssemblyName>FloatGenerator</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ESG.cs" />
+    <Compile Include="FloatGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

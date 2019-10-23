@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{12075A55-40AB-4AC8-BA76-CCA8F710EBAC}</ProjectGuid>
+    <ProjectGuid>{18AD426F-816C-47B7-A471-762AE9CC961E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExtendedSymbolGenerator</RootNamespace>
-    <AssemblyName>ExtendedSymbolGenerator</AssemblyName>
+    <RootNamespace>IGenerator</RootNamespace>
+    <AssemblyName>IGenerator</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -41,14 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ESG.cs" />
+    <Compile Include="CharGenerator.cs" />
+    <Compile Include="ConvenienceRandom.cs" />
+    <Compile Include="IGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IGenerator\Common.csproj">
-      <Project>{18ad426f-816c-47b7-a471-762ae9cc961e}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

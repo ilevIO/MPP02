@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FakerTests
@@ -95,29 +96,38 @@ namespace FakerTests
                 childConstructedValue = value / 2;
             }
         }
+        class AbscentType
+        {
+            public double value;
+        }
+        struct StructType
+        {
+            public int integer;
+        }
+        class ListClass
+        {
+            public List<StructType> list;
+        }
         [TestMethod]
         public void ClassOfPrimitivesTest()
         {
-            FakerLib.Faker faker = new FakerLib.Faker();
-            ClassOfPrimitives instance = (ClassOfPrimitives)faker.Create(typeof(ClassOfPrimitives));
-            Assert.IsNotNull(instance.integer);
-            Assert.IsNotNull(instance.someChar);
-            Assert.IsNotNull(instance.someString);
+            ClassOfPrimitives instance = (ClassOfPrimitives)FakerLib.Generators.Create(typeof(ClassOfPrimitives));
+            Assert.AreNotEqual(default(int), instance.integer);
+            Assert.AreNotEqual(default(char), instance.someChar);
+            Assert.AreNotEqual(default(string), instance.someString);
         }
         [TestMethod]
         public void ClassOfPrimitivesWithConstructorTest()
         {
-            FakerLib.Faker faker = new FakerLib.Faker();
-            ClassOfPrimitivesWithConstructors instance = (ClassOfPrimitivesWithConstructors)faker.Create(typeof(ClassOfPrimitivesWithConstructors));
-            Assert.IsNotNull(instance.propertyInt);
-            Assert.IsNotNull(instance.getConstructedInteger());
-            Assert.IsNotNull(instance.getSecondConstructedInteger());
+            ClassOfPrimitivesWithConstructors instance = (ClassOfPrimitivesWithConstructors)FakerLib.Generators.Create(typeof(ClassOfPrimitivesWithConstructors));
+            Assert.AreNotEqual(default(int), instance.propertyInt);
+            Assert.AreNotEqual(default(int), instance.getConstructedInteger());
+            Assert.AreNotEqual(default(int), instance.getSecondConstructedInteger());
         }
         [TestMethod] 
         public void InterreqursionTest()
         {
-            FakerLib.Faker faker = new FakerLib.Faker();
-            UpperInterrecursiveClass instance = (UpperInterrecursiveClass)faker.Create(typeof(UpperInterrecursiveClass));
+            UpperInterrecursiveClass instance = (UpperInterrecursiveClass)FakerLib.Generators.Create(typeof(UpperInterrecursiveClass));
             Assert.IsNotNull(instance.innerInstance);
             Assert.IsNotNull(instance.innerInstance.innerInstance);
             Assert.IsNull(instance.innerInstance.innerInstance.innerInstance);
@@ -126,10 +136,36 @@ namespace FakerTests
         [TestMethod]
         public void InheritanceTest()
         {
-            FakerLib.Faker faker = new FakerLib.Faker();
-            ChildClass instance = (ChildClass)faker.Create(typeof(ChildClass));
-            Assert.IsNotNull(instance.getChildConstructedValue);
-            Assert.IsNotNull(instance.getConstructedValue);
+
+            ChildClass instance = (ChildClass)FakerLib.Generators.Create(typeof(ChildClass));
+            Assert.AreNotEqual(default(int), instance.getChildConstructedValue);
+            Assert.AreNotEqual(default(int), instance.getConstructedValue);
+        }
+        [TestMethod] 
+        public void AbscentTypeTest ()
+        {
+            AbscentType instance = (AbscentType)FakerLib.Generators.Create(typeof(AbscentType));
+            Assert.AreEqual(default(double), instance.value);
+        }
+        [TestMethod]
+        public void StructTest()
+        {
+            StructType instance = (StructType)FakerLib.Generators.Create(typeof(StructType));
+            Assert.AreNotEqual(default(int), instance.integer);
+        }
+        [TestMethod] 
+        public void ListOfStructTest()
+        {
+            ListClass instance = (ListClass)FakerLib.Generators.Create(typeof(ListClass));
+            Assert.IsTrue(instance.list.Count >= 4 && instance.list.Count <= 11);
+            Assert.AreNotEqual(default(int), instance.list[0]);
+        }
+        [TestMethod] 
+        public void FloatGeneratorTest()
+        {
+            float instance = (float)FakerLib.Generators.Create(typeof(float));
+            float eps = float.Epsilon;
+            Assert.IsTrue(instance > default(float) + eps);
         }
     }
 }

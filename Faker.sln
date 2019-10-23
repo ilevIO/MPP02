@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakerConsoleExample", "Faker\FakerConsoleExample.csproj", "{F5C32DFB-9047-4130-81BF-DACD6ECA0FCC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FakerLib", "FakerLib\FakerLib.csproj", "{6EAB5966-A29C-4BD7-A56D-75CB69CD9F38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FakerTests", "FakerTests\FakerTests.csproj", "{6084BDA2-846B-40F5-BD70-0D2B36F8F492}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExtendedSymbolGenerator", "ExtendedSymbolGenerator\ExtendedSymbolGenerator.csproj", "{12075A55-40AB-4AC8-BA76-CCA8F710EBAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common", "IGenerator\Common.csproj", "{18AD426F-816C-47B7-A471-762AE9CC961E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloatGenerator", "FloatGenerator\FloatGenerator.csproj", "{95DEE030-FDC1-4428-B11B-28C81406696F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +19,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F5C32DFB-9047-4130-81BF-DACD6ECA0FCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5C32DFB-9047-4130-81BF-DACD6ECA0FCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5C32DFB-9047-4130-81BF-DACD6ECA0FCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5C32DFB-9047-4130-81BF-DACD6ECA0FCC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6EAB5966-A29C-4BD7-A56D-75CB69CD9F38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6EAB5966-A29C-4BD7-A56D-75CB69CD9F38}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EAB5966-A29C-4BD7-A56D-75CB69CD9F38}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +31,14 @@ Global
 		{12075A55-40AB-4AC8-BA76-CCA8F710EBAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12075A55-40AB-4AC8-BA76-CCA8F710EBAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12075A55-40AB-4AC8-BA76-CCA8F710EBAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18AD426F-816C-47B7-A471-762AE9CC961E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18AD426F-816C-47B7-A471-762AE9CC961E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18AD426F-816C-47B7-A471-762AE9CC961E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18AD426F-816C-47B7-A471-762AE9CC961E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95DEE030-FDC1-4428-B11B-28C81406696F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95DEE030-FDC1-4428-B11B-28C81406696F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95DEE030-FDC1-4428-B11B-28C81406696F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95DEE030-FDC1-4428-B11B-28C81406696F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
